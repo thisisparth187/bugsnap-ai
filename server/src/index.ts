@@ -7,4 +7,4 @@ import { createApp } from './app.js';
 dotenv.config({ path: fileURLToPath(new URL('../../.env', import.meta.url)) });
 
 const port = Number(process.env.PORT || 8787);
-createApp().listen(port, () => console.log(`BugSnap API listening on http://localhost:${port}`));
+createApp().listen(port, () => console.log(`BugSnap API listening on port ${port}`));

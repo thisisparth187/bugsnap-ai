@@ -60,6 +60,33 @@ npm run build
 npm start
 ```
 
+## Render deployment
+
+The repository includes [render.yaml](./render.yaml) for one Render Web Service. Express serves the built Vite app from `client/dist` and the API from the same origin, so the browser continues to call `/api/bug-reports/generate` without a localhost dependency.
+
+Use these exact Render settings if configuring the service manually:
+
+| Render setting | Value |
+| --- | --- |
+| Service type | Web Service |
+| Runtime | Node |
+| Build command | `npm ci && npm run build` |
+| Start command | `npm start` |
+| Health check path | `/api/health` |
+
+Set these environment variables in Render:
+
+| Variable | Value |
+| --- | --- |
+| `GEMINI_API_KEY` | Your Gemini API key; mark it secret. |
+| `GEMMA_MODEL` | `gemma-4-26b-a4b-it` |
+| `CLIENT_ORIGIN` | Leave unset for the single-origin service. |
+| `VITE_API_BASE_URL` | Leave unset for the single-origin service. |
+
+Render supplies `PORT` automatically; the server reads it and falls back to `8787` only for local development. `VITE_API_BASE_URL` is public configuration only and must never contain `GEMINI_API_KEY`. If you deliberately host the frontend separately, set `VITE_API_BASE_URL` to the backend's public origin at build time and set `CLIENT_ORIGIN` to the frontend's exact origin on the API service.
+
+After Render reports the service as live, verify `https://<your-render-host>/api/health` returns `{ "status": "ok", "configured": true }`. A successful health check is not proof that live Gemma generation works; submit a real screenshot only after the secret is configured and review the provider response.
+
 ## Environment configuration
 
 | Variable | Required | Description |
@@ -67,7 +94,8 @@ npm start
 | `GEMINI_API_KEY` | For live generation | Server-only Gemini API credential. |
 | `GEMMA_MODEL` | No | Defaults to `gemma-4-26b-a4b-it`; the documented Gemma 4 alternative is `gemma-4-31b-it`. |
 | `PORT` | No | API port, default `8787`. |
-| `CLIENT_ORIGIN` | No | CORS origin, default `http://localhost:5173`. |
+| `CLIENT_ORIGIN` | No | Optional comma-separated frontend origins for a separately hosted client; leave unset for same-origin hosting. |
+| `VITE_API_BASE_URL` | No | Optional public API origin for a separately hosted frontend; empty means same-origin `/api` calls. |
 | `VITE_REPOSITORY_URL` | No | Optional repository URL shown in the top navigation. |
 
 The backend resolves the repository-root `.env` explicitly, so `npm run dev` and `npm start` work with the provided root-level file even though the server package is a workspace.

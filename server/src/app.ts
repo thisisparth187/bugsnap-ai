@@ -1,6 +1,9 @@
 import cors from 'cors';
 import express, { type ErrorRequestHandler } from 'express';
 import multer from 'multer';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { bugReportSchema, environmentSchema, type EnvironmentDetails } from './report.js';
 import { generateWithGemma } from './ai.js';
 
@@ -74,8 +77,8 @@ function environmentMissingPrompts(environment: EnvironmentDetails) {
 
 export function createApp() {
   const app = express();
-  const allowedOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
-  app.use(cors({ origin: allowedOrigin }));
+  const allowedOrigins = (process.env.CLIENT_ORIGIN || '').split(',').map((origin) => origin.trim()).filter(Boolean);
+  app.use(cors(allowedOrigins.length ? { origin: allowedOrigins } : { origin: false }));
   app.use(express.json({ limit: '32kb' }));
 
   app.get('/api/health', (_req, res) => res.json({ status: 'ok', configured: Boolean(process.env.GEMINI_API_KEY) }));
@@ -117,6 +120,18 @@ export function createApp() {
       return res.status(502).json(errorResponse('AI_PROVIDER_ERROR', 'The AI provider could not complete this report. Please retry.', 502));
     }
   });
+
+  // Render runs the built server from server/dist. This path resolves to the
+  // sibling client/dist directory in both source and compiled layouts.
+  const clientDist = fileURLToPath(new URL('../../client/dist/', import.meta.url));
+  const clientIndex = join(clientDist, 'index.html');
+  if (existsSync(clientIndex)) {
+    app.use(express.static(clientDist, { index: false }));
+    app.use((req, res, next) => {
+      if (req.method === 'GET' && !req.path.startsWith('/api/')) return res.sendFile(clientIndex);
+      return next();
+    });
+  }
 
   const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
     if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') return res.status(413).json(errorResponse('IMAGE_TOO_LARGE', 'Keep screenshots under 8 MB.', 413));

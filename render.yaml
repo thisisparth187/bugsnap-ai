@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: bugsnap-ai
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMMA_MODEL
+        value: gemma-4-26b-a4b-it

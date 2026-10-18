@@ -11,6 +11,7 @@ import { TopNav } from './TopNav';
 import type { BugReport } from '../types';
 import { detectEnvironment, refreshClientMetadata } from '../lib/environment';
 import { downloadMarkdown, reportToMarkdown } from '../lib/report';
+import { apiUrl } from '../lib/api';
 
 function initialDarkMode() {
   const storage = window.localStorage;
@@ -53,7 +54,7 @@ export function AppShell() {
     const formData = new FormData(); formData.append('screenshot', file); formData.append('description', description.trim());
     formData.append('environmentMetadata', JSON.stringify(currentEnvironment));
     try {
-      const response = await fetch('/api/bug-reports/generate', { method: 'POST', body: formData });
+      const response = await fetch(apiUrl('/api/bug-reports/generate'), { method: 'POST', body: formData });
       const body = await response.json() as { report?: BugReport };
       if (!response.ok || !body.report) throw new Error(apiMessage(body));
       setReport(body.report); setNotice('Report ready — review every field before filing.');
