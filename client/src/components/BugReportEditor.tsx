@@ -1,0 +1,14 @@
+import { Plus, Trash2 } from 'lucide-react';
+import type { BugReport } from '../types';
+import { EvidencePanel } from './EvidencePanel';
+
+type Props = { report: BugReport; onChange: (report: BugReport) => void };
+
+function TextField({ label, value, onChange, large = false }: { label: string; value: string; onChange: (value: string) => void; large?: boolean }) {
+  return <div className="report-field"><label>{label}</label>{large ? <textarea value={value} onChange={(event) => onChange(event.target.value)} /> : <input value={value} onChange={(event) => onChange(event.target.value)} />}</div>;
+}
+
+export function BugReportEditor({ report, onChange }: Props) {
+  const set = <K extends keyof BugReport>(key: K, value: BugReport[K]) => onChange({ ...report, [key]: value });
+  return <div className="report-editor"><div className="report-title-row"><div><p className="eyebrow">GENERATED ISSUE / EDITABLE</p><input className="report-title-input" value={report.title} onChange={(event) => set('title', event.target.value)} aria-label="Issue title" /></div><span className={`severity severity-${report.severitySuggestion}`}>{report.severitySuggestion.toUpperCase()} SEVERITY</span></div><div className="report-fields"><TextField label="SUMMARY" value={report.summary} onChange={(value) => set('summary', value)} large /><TextField label="OBSERVED BEHAVIOR" value={report.observedBehavior} onChange={(value) => set('observedBehavior', value)} large /><TextField label="EXPECTED BEHAVIOR" value={report.expectedBehavior} onChange={(value) => set('expectedBehavior', value)} large /><TextField label="ENVIRONMENT" value={report.environment} onChange={(value) => set('environment', value)} large /></div><div className="steps-field"><div className="steps-head"><label>REPRODUCTION STEPS</label><button type="button" className="tiny-button" onClick={() => set('reproductionSteps', [...report.reproductionSteps, ''])}><Plus size={14} /> ADD STEP</button></div>{report.reproductionSteps.length ? report.reproductionSteps.map((step, index) => <div className="step-row" key={`${index}-${step}`}><span>{index + 1}</span><input value={step} onChange={(event) => set('reproductionSteps', report.reproductionSteps.map((item, itemIndex) => itemIndex === index ? event.target.value : item))} placeholder="Describe a user action, or leave blank if unknown" /><button type="button" aria-label={`Remove step ${index + 1}`} onClick={() => set('reproductionSteps', report.reproductionSteps.filter((_, itemIndex) => itemIndex !== index))}><Trash2 size={15} /></button></div>) : <p className="empty-steps">No reproduction steps were provided. Add them if you know them.</p>}</div><EvidencePanel visibleEvidence={report.visibleEvidence} hypotheses={report.hypotheses} missingInformation={report.missingInformation} /></div>;
+}

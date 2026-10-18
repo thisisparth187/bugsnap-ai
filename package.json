@@ -1,0 +1,17 @@
+{
+  "name": "bugsnap-ai",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Evidence-aware screenshot to bug report workspace powered by Gemma 4.",
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "dev": "concurrently -k -n client,server -c green,cyan \"npm run dev -w client\" \"npm run dev -w server\"",
+    "build": "npm run build -w client && npm run build -w server",
+    "test": "npm run test -w client -- --run && npm run test -w server -- --run",
+    "test:watch": "concurrently -n client,server -c green,cyan \"npm run test:watch -w client\" \"npm run test:watch -w server\"",
+    "start": "npm run start -w server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

@@ -1,0 +1,7 @@
+import { Eye, FlaskConical, Info, Search } from 'lucide-react';
+
+type Props = { visibleEvidence: string[]; hypotheses: string[]; missingInformation: string[] };
+
+export function EvidencePanel({ visibleEvidence, hypotheses, missingInformation }: Props) {
+  return <div className="evidence-grid"><section className="evidence-card visible"><div className="card-heading"><span className="evidence-icon"><Eye size={15} /></span><div><p>VISIBLE EVIDENCE</p><h3>What the screenshot shows</h3></div></div><ul>{visibleEvidence.length ? visibleEvidence.map((item) => <li key={item}>{item}</li>) : <li>None recorded.</li>}</ul></section><section className="evidence-card unknown"><div className="card-heading"><span className="evidence-icon"><Info size={15} /></span><div><p>NEEDS YOUR INPUT</p><h3>Questions to close the gap</h3></div></div><ul>{missingInformation.length ? missingInformation.map((item) => <li key={item}>{item}</li>) : <li>No open questions.</li>}</ul></section><section className="evidence-card hypothesis"><div className="card-heading"><span className="evidence-icon"><FlaskConical size={15} /></span><div><p>UNVERIFIED</p><h3>Possible explanations</h3></div></div><ul>{hypotheses.length ? hypotheses.map((item) => <li key={item}>{item}</li>) : <li>No hypotheses recorded.</li>}</ul><div className="hypothesis-note"><Search size={14} /> These are leads, not diagnoses.</div></section></div>;
+}
