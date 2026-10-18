@@ -70,6 +70,7 @@ Use these exact Render settings if configuring the service manually:
 | --- | --- |
 | Service type | Web Service |
 | Runtime | Node |
+| Plan | Free |
 | Build command | `npm ci && npm run build` |
 | Start command | `npm start` |
 | Health check path | `/api/health` |
