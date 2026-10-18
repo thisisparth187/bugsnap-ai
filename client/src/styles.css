@@ -101,10 +101,7 @@ main { max-width: 1320px; margin: 0 auto; padding: 0 32px; }
 .top-nav { height: 78px; border-bottom: 2px solid var(--color-border); display: flex; align-items: center; justify-content: space-between; max-width: 1320px; margin: 0 auto; padding: 0 32px; }
 .brand-mark { display: flex; align-items: center; gap: 10px; color: var(--color-text-primary); font-weight: 900; letter-spacing: -0.06em; font-size: 20px; }
 .brand-mark em { color: var(--color-accent-secondary-text); font-style: normal; }
-.brand-icon { position: relative; display: grid; grid-template-columns: repeat(2, 6px); gap: 3px; padding: 7px; background: var(--color-accent-primary); border: 2px solid var(--color-border); box-shadow: 3px 3px 0 var(--color-shadow); transform: rotate(-3deg); }
-.brand-icon span { width: 6px; height: 6px; background: var(--color-accent-primary-text); display: block; }
-.brand-icon:before, .brand-icon:after { content: ''; position: absolute; top: 2px; width: 4px; height: 4px; background: var(--color-accent-primary-text); }
-.brand-icon:before { left: -6px; } .brand-icon:after { right: -6px; }
+.brand-logo { width: 38px; height: 38px; display: block; object-fit: cover; border: 2px solid var(--color-border); box-shadow: 3px 3px 0 var(--color-shadow); transform: rotate(-3deg); }
 .nav-right { display: flex; align-items: center; gap: 22px; }
 .engine-chip, .eyebrow, .nav-link, .section-kicker, .upload-meta, .field-group label, .report-field label, .steps-field label, .preview-note, .footer, .tiny-button { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .07em; font-size: 10px; font-weight: 800; }
 .engine-chip { display: inline-flex; align-items: center; gap: 7px; color: var(--color-text-secondary); }
