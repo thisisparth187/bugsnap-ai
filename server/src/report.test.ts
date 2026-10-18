@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { bugReportSchema, parseModelJson } from './report.js';
 
-const valid = { title: 'Button is clipped', summary: 'The button is partially hidden.', observedBehavior: 'The button is clipped at the right edge.', expectedBehavior: 'The button should be fully visible.', reproductionSteps: [], environment: 'Unknown', visibleEvidence: ['A dark button is visibly cut off.'], missingInformation: ['What browser and viewport size were used?'], hypotheses: ['Unverified hypothesis: the layout may overflow at this width.'], severitySuggestion: 'medium' as const };
+const valid = { title: 'Button is clipped', summary: 'The button is partially hidden.', observedBehavior: 'The button is clipped at the right edge.', expectedBehavior: 'The button should be fully visible.', reproductionSteps: [], environment: { browser: 'Chrome 140', operatingSystem: 'Windows', deviceType: 'Desktop', applicationUrl: 'Not provided', applicationVersion: 'Not provided', userAgent: 'Mozilla/5.0 test', viewport: { width: 1280, height: 720 }, screen: { width: 1920, height: 1080 }, technicalMetadataIncluded: true, pageUrlIncluded: false, sources: { browser: 'detected' as const, operatingSystem: 'detected' as const, deviceType: 'detected' as const, applicationUrl: 'missing' as const, applicationVersion: 'missing' as const } }, visibleEvidence: ['A dark button is visibly cut off.'], missingInformation: ['What browser and viewport size were used?'], hypotheses: ['Unverified hypothesis: the layout may overflow at this width.'], severitySuggestion: 'medium' as const };
 
 describe('bug report schema', () => {
   it('accepts the required report shape', () => expect(bugReportSchema.parse(valid)).toEqual(valid));

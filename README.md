@@ -14,6 +14,7 @@ Add product screenshots here when available:
 - Client and server validation, 8 MB limit, in-memory processing, and no screenshot storage.
 - Gemma 4 multimodal analysis through Google's official `@google/genai` SDK.
 - Editable issue title, summary, observed and expected behavior, environment, and reproduction steps.
+- Consent-aware environment capture for browser/OS/device context, viewport/screen dimensions, and the current app path.
 - Explicit visible-evidence, missing-information, and unverified-hypothesis panels.
 - Copy Markdown, download a descriptive `.md` file, retry recoverable failures, and start another report without a refresh.
 - Responsive neo-brutalist interface with an optional dark theme.
@@ -69,6 +70,8 @@ npm start
 | `CLIENT_ORIGIN` | No | CORS origin, default `http://localhost:5173`. |
 | `VITE_REPOSITORY_URL` | No | Optional repository URL shown in the top navigation. |
 
+The backend resolves the repository-root `.env` explicitly, so `npm run dev` and `npm start` work with the provided root-level file even though the server package is a workspace.
+
 If `GEMINI_API_KEY` is absent, both servers still start. The UI will show the backend's configuration message after a generation attempt; it never falls back to a fake report or another provider.
 
 ## API
@@ -83,6 +86,7 @@ Send `multipart/form-data` with:
 
 - `screenshot`: one PNG, JPEG, or WebP image, maximum 8 MB.
 - `description`: required user-provided context, maximum 5,000 characters.
+- `environmentMetadata`: client-collected JSON containing editable browser, operating system, device, application URL/version, and optional technical metadata. The client sends the current application URL only after explicit consent, and technical metadata can be removed before export.
 
 Success returns:
 
@@ -105,6 +109,8 @@ Success returns:
 ```
 
 Errors use `{ "error": { "code": "...", "message": "..." } }`. Provider errors, timeouts, malformed JSON, and schema violations do not expose stack traces or secrets.
+
+Environment fields are rendered in three lanes: detected details, user-provided details, and missing information. The model receives the supplied metadata as authoritative context; it is instructed never to infer browser or operating system details from screenshot appearance.
 
 ## Test and build
 

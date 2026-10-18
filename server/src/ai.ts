@@ -1,5 +1,5 @@
 import { GoogleGenAI } from '@google/genai';
-import { REPORT_JSON_INSTRUCTION, parseModelJson, type BugReport } from './report.js';
+import { REPORT_JSON_INSTRUCTION, parseModelJson, type BugReport, type EnvironmentDetails } from './report.js';
 
 export const DEFAULT_MODEL = 'gemma-4-26b-a4b-it';
 const REQUEST_TIMEOUT_MS = 45_000;
@@ -19,7 +19,7 @@ function timeout<T>(promise: Promise<T>, duration: number): Promise<T> {
   ]);
 }
 
-export async function generateWithGemma(input: { image: Buffer; mimeType: string; description: string }): Promise<BugReport> {
+export async function generateWithGemma(input: { image: Buffer; mimeType: string; description: string; environment: EnvironmentDetails }): Promise<BugReport> {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) throw new Error('AI_NOT_CONFIGURED');
   const ai = new GoogleGenAI({ apiKey });
@@ -28,7 +28,7 @@ export async function generateWithGemma(input: { image: Buffer; mimeType: string
     model,
     contents: [
       { inlineData: { mimeType: input.mimeType, data: input.image.toString('base64') } },
-      { text: `User-provided bug description:\n${input.description}\n\nAnalyze the screenshot and produce the JSON report.` },
+      { text: `User-provided bug description:\n${input.description}\n\nSupplied environment metadata (authoritative; do not infer missing values):\n${JSON.stringify(input.environment)}\n\nAnalyze the screenshot and produce the JSON report.` },
     ],
     config: {
       systemInstruction,
